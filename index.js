@@ -3,6 +3,7 @@
 const form = document.querySelector("[data-form]");
 const lists = document.querySelector("[data-lists]");
 const input = document.querySelector("[data-input]");
+const removeAllBtn = document.querySelector(".removeAll__btn");
 
 // LOCAL STORAGE
 class Storage {
@@ -28,15 +29,16 @@ form.addEventListener("submit", (e) => {
   e.preventDefault();
   let id = Math.random() * 100000;
   const todo = new Todo(id, input.value);
+
+  // ADDING TASK TO ARR
   toDoArr = [...toDoArr, todo];
   UI.displayData();
   UI.clearInput();
 
-  // REMOVE TASK FROM THE DOM
-  UI.removeToDo();
-
   // ADD TO STORAGE
   Storage.addToStorage(toDoArr);
+
+  UI.removeBtn();
 });
 
 // MAKE OBJECT INSTANCE
@@ -53,8 +55,11 @@ class UI {
     let displayData = toDoArr.map((item) => {
       return `
         <div class="todo">
-          <p>${item.todo}</p>
-          <span class="remove" data-id = ${item.id}>🗑️</span>
+          <p class="todo__text">${item.todo}</p>
+          <div class="icon">
+            <span class="remove" data-id = ${item.id}>🗑️</span>
+            <span class="edit" data-id = ${item.id}>🖊️</span>
+          </div>
         </div>
       `;
     });
@@ -68,17 +73,59 @@ class UI {
   static removeToDo() {
     lists.addEventListener("click", (e) => {
       if (e.target.classList.contains("remove")) {
-        e.target.parentElement.remove();
+        e.target.parentElement.parentElement.remove();
+        let btnId = e.target.dataset.id;
+        // REMOVE FROM ARRAY
+        UI.removeArrayToDo(btnId);
+        UI.removeBtn();
       }
-      let btnId = e.target.dataset.id;
-      // REMOVE FROM ARRAY
-      UI.removeArrayToDo(btnId);
     });
   }
 
   static removeArrayToDo(id) {
     toDoArr = toDoArr.filter((item) => item.id !== +id);
     Storage.addToStorage(toDoArr);
+  }
+
+  static editBtn() {
+    let iconChange = true;
+    lists.addEventListener("click", (e) => {
+      if (e.target.classList.contains("edit")) {
+        let p = e.target.parentElement.parentElement.firstElementChild;
+        const btnId = e.target.dataset.id;
+        if (iconChange) {
+          p.setAttribute("contentEditable", "true");
+          p.focus();
+          e.target.textContent = "Save";
+          p.style.color = "blue";
+        } else {
+          e.target.textContent = "🖊️";
+          p.style.color = "black";
+          p.removeAttribute("contentEditable");
+          const newArr = toDoArr.findIndex((item) => item.id === +btnId);
+          toDoArr[newArr].todo = p.textContent;
+          Storage.addToStorage(toDoArr);
+        }
+      }
+      iconChange = !iconChange;
+    });
+  }
+
+  static removeAll() {
+    removeAllBtn.addEventListener("click", () => {
+      toDoArr.length = 0;
+      localStorage.clear();
+      UI.displayData();
+      UI.removeBtn();
+    });
+  }
+
+  static removeBtn() {
+    if (toDoArr.length <= 0) {
+      removeAllBtn.style.display = "none";
+    } else {
+      removeAllBtn.style.display = "flex";
+    }
   }
 }
 
@@ -87,4 +134,13 @@ window.addEventListener("DOMContentLoaded", () => {
 
   // REMOVE FROM THE DOM
   UI.removeToDo();
+
+  // EDIT TASKS
+  UI.editBtn();
+
+  // REMOVE ALL TASKS
+  UI.removeAll();
+
+  // SHOW AND HIDE REMOVE ALL BTN
+  UI.removeBtn();
 });

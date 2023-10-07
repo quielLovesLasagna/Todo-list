@@ -57,3 +57,21 @@ body {
 .todo span {
   cursor: pointer;
 }
+
+.todo__text {
+  outline: none;
+}
+
+.removeAll {
+  text-align: center;
+  padding-top: 1rem;
+}
+
+.removeAll__btn {
+  padding: 0.5rem 1rem;
+  background-color: darkblue;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
