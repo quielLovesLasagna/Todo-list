@@ -43,9 +43,19 @@ form.addEventListener("submit", (e) => {
 
 // MAKE OBJECT INSTANCE
 class Todo {
+  date = new Date();
+
   constructor(id, todo) {
     this.id = id;
     this.todo = todo;
+    this.setTime();
+  }
+
+  setTime() {
+    // prettier-ignore
+    const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+    this.dateFormat = `${months[this.date.getMonth()]}, ${this.date.getDate()}`;
   }
 }
 
@@ -57,6 +67,7 @@ class UI {
         <div class="todo">
           <p class="todo__text">${item.todo}</p>
           <div class="icon">
+            <p class="date__format">${item.dateFormat}</p>
             <span class="remove" data-id = ${item.id}>🗑️</span>
             <span class="edit" data-id = ${item.id}>🖊️</span>
           </div>

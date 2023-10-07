@@ -62,6 +62,12 @@ body {
   outline: none;
 }
 
+.icon {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 .removeAll {
   text-align: center;
   padding-top: 1rem;
@@ -74,4 +80,9 @@ body {
   border: none;
   border-radius: 5px;
   cursor: pointer;
+}
+
+.date__format {
+  color: grey;
+  font-size: 0.7rem;
 }
